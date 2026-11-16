@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8f6ed">
+  <meta name="description" content="Прыгай по платформам, собирай вкусняшки и найди четыре подарка.">
+  <title>Дудл, вверх!</title>
+  <link rel="icon" type="image/png" data-sprite="prize-gift">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <main class="game" id="game" data-mode="menu">
+    <canvas id="field" aria-label="Игровое поле"></canvas>
+
+    <header class="hud" id="hud" hidden>
+      <button class="round pause" id="pause" type="button" aria-label="Пауза"><span></span><span></span></button>
+      <div class="scoreboard" aria-label="Высота">
+        <span class="best">Рекорд <span id="best">0</span></span>
+        <strong id="score">0</strong>
+      </div>
+      <div class="counters">
+        <div class="pill gifts" aria-label="Подарки">
+          <img data-sprite="prize-gift" alt=""><span id="gifts">0</span><span class="goal">/ 4</span>
+        </div>
+        <div class="pill life" aria-label="Жизни"><span aria-hidden="true">♥</span><span id="life">1</span></div>
+      </div>
+    </header>
+
+    <div class="toast" id="toast" role="status" hidden></div>
+
+    <div class="controls" id="controls" hidden>
+      <button class="round direction" id="left" type="button" aria-label="Двигаться влево">←</button>
+      <button class="round fire" id="fire" type="button" aria-label="Стрелять">↑</button>
+      <button class="round direction" id="right" type="button" aria-label="Двигаться вправо">→</button>
+    </div>
+
+    <section class="overlay" id="menu" aria-labelledby="game-title">
+      <div class="menu-panel">
+        <div class="menu-art" aria-hidden="true">
+          <div class="art-ring"></div>
+          <div class="art-tick art-tick-one"></div><div class="art-tick art-tick-two"></div>
+          <img class="art-hero" data-sprite="Doodle" alt="">
+          <img class="art-platform" data-sprite="platform-normal" alt="">
+          <img class="art-gift" data-sprite="prize-gift" alt="">
+          <span class="art-star">✦</span>
+        </div>
+        <h1 id="game-title">Дудл,<br><span>вверх!</span></h1>
+        <p class="lead">Собери <b>4 подарка</b> и открой сюрприз.</p>
+        <button class="action" id="start" type="button" disabled>Загрузка…</button>
+        <p class="hint">← → или касания по краям<br>↑ или пробел — выстрел</p>
+      </div>
+    </section>
+
+    <section class="overlay tinted" id="paused" aria-labelledby="pause-title" hidden>
+      <div class="panel">
+        <h2 id="pause-title" tabindex="-1">Пауза</h2>
+        <button class="action" id="resume" type="button">Продолжить</button>
+        <button class="plain" id="finish" type="button">Завершить попытку</button>
+      </div>
+    </section>
+
+    <section class="overlay tinted" id="result" aria-labelledby="result-title" hidden>
+      <div class="panel result-panel">
+        <h2 id="result-title" tabindex="-1">Итоги прыжка</h2>
+        <p class="result-score"><strong id="final-score">0</strong> <span>очков</span></p>
+        <dl class="stats">
+          <div><dt><img data-sprite="prize-burger" alt="">Бургеры</dt><dd id="final-burger">0</dd></div>
+          <div><dt><img data-sprite="prize-cherry" alt="">Вишни</dt><dd id="final-cherry">0</dd></div>
+          <div><dt><img data-sprite="prize-gift" alt="">Подарки</dt><dd id="final-gift">0</dd></div>
+        </dl>
+        <div class="certificate" id="certificate" hidden>
+          <span class="confetti confetti-a" aria-hidden="true"></span>
+          <span class="confetti confetti-b" aria-hidden="true"></span>
+          <span class="confetti confetti-c" aria-hidden="true"></span>
+          <span class="confetti confetti-d" aria-hidden="true"></span>
+          <div class="pot" aria-hidden="true"></div>
+          <p>Твой подарок</p>
+          <h3>Сертификат<br>в гончарную студию</h3>
+        </div>
+        <p class="hint" id="locked">Собери 4 подарка за одну попытку.</p>
+        <button class="action" id="restart" type="button">Прыгнуть ещё раз</button>
+      </div>
+    </section>
+    <noscript><p class="noscript">Для игры включите JavaScript.</p></noscript>
+  </main>
+</body>
+</html>
