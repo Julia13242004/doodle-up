@@ -1,11 +1,11 @@
-import {Game, STEP, GIFT_GOAL} from './game.js';
-import {Renderer, loadSprites} from './renderer.js';
 import {EMBEDDED_SPRITES} from './sprite-data.js';
+import {Game, STEP, GIFT_GOAL, FOOD_EFFECTS} from './game.js?v=2';
+import {Renderer, loadSprites} from './renderer.js?v=2';
 
 const find = (id) => document.getElementById(id);
 const ui = Object.fromEntries([
   'game', 'field', 'menu', 'paused', 'result', 'hud', 'controls', 'start', 'pause', 'resume', 'finish', 'restart',
-  'left', 'right', 'fire', 'best', 'score', 'gifts', 'life', 'toast', 'certificate', 'locked',
+  'left', 'right', 'fire', 'best', 'score', 'gifts', 'life', 'toast', 'certificate', 'locked', 'home', 'effects',
   'pause-title', 'result-title', 'final-score', 'final-burger', 'final-cherry', 'final-gift'
 ].map((id) => [id, find(id)]));
 
@@ -13,6 +13,10 @@ const renderer = new Renderer(ui.field);
 for (const element of document.querySelectorAll('[data-sprite]')) {
   element.setAttribute(element.matches('link') ? 'href' : 'src', EMBEDDED_SPRITES[element.dataset.sprite]);
 }
+const foodIndicators = Object.keys(FOOD_EFFECTS).map((kind) => {
+  const badge = find('effect-' + kind);
+  return {kind, badge, number: badge.querySelector('span')};
+});
 const keys = new Set();
 const pointers = new Map();
 const keyDirection = {ArrowLeft: -1, ArrowRight: 1};
@@ -51,6 +55,7 @@ function show(next) {
   for (const panel of ['menu', 'paused', 'result']) ui[panel].hidden = panel !== next;
   ui.hud.hidden = next === 'menu' || next === 'result';
   ui.controls.hidden = next !== 'running';
+  ui.effects.hidden = true;
   ui.toast.hidden = true;
   toastUntil = 0;
   elapsed = 0;
@@ -65,6 +70,14 @@ function start() {
   if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   updateHud();
   renderer.draw(game);
+}
+
+function goHome() {
+  game = undefined;
+  renderer.sparkles = [];
+  show('menu');
+  renderer.draw();
+  ui.start.focus();
 }
 
 function pause() {
@@ -102,6 +115,16 @@ function updateHud() {
   ui.best.textContent = Math.max(record, game.score);
   ui.gifts.textContent = game.collected.gift;
   ui.life.textContent = game.lives;
+  let hasEffect = false;
+  for (const {kind, badge, number} of foodIndicators) {
+    const seconds = Math.ceil(game.effectRemaining(kind));
+    badge.hidden = seconds === 0;
+    if (seconds) {
+      hasEffect = true;
+      if (number.textContent !== String(seconds)) number.textContent = seconds;
+    }
+  }
+  ui.effects.hidden = !hasEffect;
 }
 
 function clearPointer(event) {
@@ -159,7 +182,10 @@ function processEvents(now) {
   for (const event of game.events.splice(0)) {
     if (event.type === 'item') {
       if (event.unlocked) announce('Приз открыт! Можно прыгать дальше.', now);
-      if (event.kind !== 'gift') renderer.sparkles.push({...event, label: '+1 ♥', end: now + 570});
+      if (event.kind in FOOD_EFFECTS) {
+        const label = event.kind === 'burger' ? 'Ускорение!' : 'Платформы ↔';
+        renderer.sparkles.push({...event, label, end: now + 570});
+      }
     } else if (event.type === 'lost-life' && (!toastUntil || now >= toastUntil)) {
       announce('Потрачена одна жизнь', now);
     }
@@ -206,6 +232,7 @@ async function prepare() {
 
 ui.start.addEventListener('click', () => Object.keys(renderer.sprites).length ? start() : prepare());
 ui.restart.addEventListener('click', start);
+ui.home.addEventListener('click', goHome);
 ui.pause.addEventListener('click', pause);
 ui.resume.addEventListener('click', resume);
 ui.finish.addEventListener('click', finish);

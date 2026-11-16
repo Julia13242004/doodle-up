@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f8f6ed">
-  <meta name="description" content="Прыгай по платформам, собирай вкусняшки и найди четыре подарка.">
-  <title>Дудл, вверх!</title>
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Прыгай по платформам, собирай вкусняшки и найди пять подарков.">
+  <title>Andrey, jump!</title>
   <link rel="icon" type="image/png" data-sprite="prize-gift">
-  <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./main.js"></script>
+  <link rel="stylesheet" href="./styles.css?v=2">
+  <script type="module" src="./main.js?v=2"></script>
 </head>
 <body>
   <main class="game" id="game" data-mode="menu">
@@ -22,13 +22,19 @@
       </div>
       <div class="counters">
         <div class="pill gifts" aria-label="Подарки">
-          <img data-sprite="prize-gift" alt=""><span id="gifts">0</span><span class="goal">/ 4</span>
+          <img data-sprite="prize-gift" alt=""><span id="gifts">0</span><span class="goal">/ 5</span>
         </div>
-        <div class="pill life" aria-label="Жизни"><span aria-hidden="true">♥</span><span id="life">1</span></div>
+        <div class="pill life" aria-label="Жизни"><span aria-hidden="true">♥</span><span id="life">3</span></div>
       </div>
     </header>
 
-    <div class="toast" id="toast" role="status" hidden></div>
+    <div class="game-status">
+      <div class="effects" id="effects" hidden>
+        <span class="effect effect-burger" id="effect-burger" hidden>Ускорение · <span></span> с</span>
+        <span class="effect effect-cherry" id="effect-cherry" hidden>Платформы движутся · <span></span> с</span>
+      </div>
+      <div class="toast" id="toast" role="status" hidden></div>
+    </div>
 
     <div class="controls" id="controls" hidden>
       <button class="round direction" id="left" type="button" aria-label="Двигаться влево">←</button>
@@ -46,8 +52,8 @@
           <img class="art-gift" data-sprite="prize-gift" alt="">
           <span class="art-star">✦</span>
         </div>
-        <h1 id="game-title">Дудл,<br><span>вверх!</span></h1>
-        <p class="lead">Собери <b>4 подарка</b> и открой сюрприз.</p>
+        <h1 id="game-title" lang="en">Andrey,<br><span>jump!</span></h1>
+        <p class="lead">Собери <b>5 подарков</b> и открой сюрприз.</p>
         <button class="action" id="start" type="button" disabled>Загрузка…</button>
         <p class="hint">← → или касания по краям<br>↑ или пробел — выстрел</p>
       </div>
@@ -79,8 +85,9 @@
           <p>Твой подарок</p>
           <h3>Сертификат<br>в гончарную студию</h3>
         </div>
-        <p class="hint" id="locked">Собери 4 подарка за одну попытку.</p>
+        <p class="hint" id="locked">Собери 5 подарков за одну попытку.</p>
         <button class="action" id="restart" type="button">Прыгнуть ещё раз</button>
+        <button class="plain home" id="home" type="button">На главный экран</button>
       </div>
     </section>
     <noscript><p class="noscript">Для игры включите JavaScript.</p></noscript>

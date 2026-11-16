@@ -1,5 +1,7 @@
 export const WIDTH = 400;
-export const GIFT_GOAL = 4;
+export const GIFT_GOAL = 5;
+export const START_LIVES = 3;
+export const FOOD_EFFECTS = Object.freeze({burger: 6, cherry: 8});
 export const STEP = 1 / 120;
 export const GRAVITY = 1650;
 const BOUNCE = 690;
@@ -22,8 +24,10 @@ export class Game {
     this.camera = 0;
     this.furthest = START_HEIGHT;
     this.player = {x: WIDTH / 2, y: START_HEIGHT, vx: 0, vy: BOUNCE, face: 1, firing: 0, shield: 0, jet: 0};
-    this.lives = 1;
+    this.lives = START_LIVES;
     this.collected = {burger: 0, cherry: 0, gift: 0};
+    this.effectEnds = {burger: 0, cherry: 0};
+    this.cherryStarted = 0;
     this.platforms = [];
     this.monsters = [];
     this.items = [];
@@ -46,14 +50,19 @@ export class Game {
     return this.collected.gift >= GIFT_GOAL;
   }
 
+  effectRemaining(kind) {
+    return Math.max(0, this.effectEnds[kind] - this.time);
+  }
+
   between(low, high) {
     return low + (high - low) * this.random();
   }
 
   addPlatform(x, y, width, kind, anchor = true) {
-    const moving = kind === 'moving';
-    const amplitude = moving ? Math.min(anchor ? 23 : 48, x - width / 2 - 3, WIDTH - x - width / 2 - 3) : 0;
-    const platform = {x, homeX: x, y, width, kind, amplitude, phase: this.between(0, Math.PI * 2), broken: false};
+    const travel = anchor ? 23 : 48;
+    const leftTravel = Math.min(travel, x - width / 2 - 3);
+    const rightTravel = Math.min(travel, WIDTH - x - width / 2 - 3);
+    const platform = {x, homeX: x, y, width, kind, leftTravel, rightTravel, phase: this.between(0, Math.PI * 2), broken: false};
     this.platforms.push(platform);
     return platform;
   }
@@ -80,11 +89,11 @@ export class Game {
       }
 
       if (row === this.nextGift) {
-        this.items.push({x, y: y + 30, kind: 'gift', taken: false});
+        this.items.push({x, y: y + 30, kind: 'gift', platform, taken: false});
         this.nextGift += Math.floor(this.between(6, 9));
         if (this.nextFood === row) this.nextFood++;
       } else if (row === this.nextFood) {
-        this.items.push({x, y: y + 29, kind: this.random() < .5 ? 'burger' : 'cherry', taken: false});
+        this.items.push({x, y: y + 29, kind: this.random() < .5 ? 'burger' : 'cherry', platform, taken: false});
         this.nextFood += Math.floor(this.between(2, 5));
       } else if (row > 5 && this.random() < .20 + .09 * difficulty) {
         const kind = MONSTERS[Math.floor(this.random() * MONSTERS.length)];
@@ -110,16 +119,14 @@ export class Game {
       this.shots.push({x: wrapX(p.x + p.face * 11), y: p.y + 48, previousY: p.y + 48, hit: false});
     }
     if (direction) p.face = direction;
-    const horizontal = direction * 270;
+    const horizontal = direction * (this.effectRemaining('burger') > 0 ? 410 : 270);
     p.vx += (horizontal - p.vx) * Math.min(1, dt * (direction ? 18 : 23));
     const previousY = p.y;
     p.x = wrapX(p.x + p.vx * dt);
     p.vy = p.jet > 0 ? 840 : p.vy - GRAVITY * dt;
     p.y += p.vy * dt;
 
-    for (const platform of this.platforms) {
-      platform.x = platform.homeX + platform.amplitude * Math.sin(this.time * 1.9 + platform.phase);
-    }
+    this.movePlatforms();
     for (const monster of this.monsters) {
       const flying = monster.kind === 'bat';
       monster.x = clamp(monster.homeX + Math.sin(this.time * (flying ? 2.2 : 1.6) + monster.phase) * (flying ? 54 : 16), 24, WIDTH - 24);
@@ -143,6 +150,17 @@ export class Game {
     }
     this.generate();
     this.cleanUp();
+  }
+
+  movePlatforms() {
+    const cherryBlend = clamp(Math.min(this.time - this.cherryStarted, this.effectRemaining('cherry')) / .25, 0, 1);
+    for (const platform of this.platforms) {
+      const wave = Math.sin(this.time * 1.9 + platform.phase);
+      const travel = wave < 0 ? platform.leftTravel : platform.rightTravel;
+      const activity = platform.kind === 'moving' ? 1 : cherryBlend;
+      platform.x = platform.homeX + wave * travel * activity;
+    }
+    for (const item of this.items) item.x = item.platform.x;
   }
 
   land(previousY) {
@@ -213,7 +231,8 @@ export class Game {
       if (item.taken || !overlaps(p.x, p.y + 21, item, item.kind === 'gift' ? 34 : 29, 33)) continue;
       item.taken = true;
       this.collected[item.kind]++;
-      if (item.kind !== 'gift') this.lives++;
+      if (item.kind === 'cherry' && this.effectRemaining('cherry') === 0) this.cherryStarted = this.time;
+      if (item.kind in FOOD_EFFECTS) this.effectEnds[item.kind] = this.time + FOOD_EFFECTS[item.kind];
       this.events.push({type: 'item', kind: item.kind, x: item.x, y: item.y,
         unlocked: item.kind === 'gift' && this.collected.gift === GIFT_GOAL});
     }
