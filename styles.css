@@ -114,12 +114,6 @@ button:focus-visible { outline: 3px solid #267f9d; outline-offset: 4px; }
   gap: 6px;
   pointer-events: none;
 }
-.effects {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 5px;
-}
 .effect {
   padding: 4px 8px;
   border: 1px solid #272b2752;
@@ -129,7 +123,23 @@ button:focus-visible { outline: 3px solid #267f9d; outline-offset: 4px; }
   font-variant-numeric: tabular-nums;
 }
 .effect-burger { background: #ffebaa; }
-.effect-cherry { background: #dff1ff; }
+.effect-cherry {
+  position: absolute;
+  top: max(23%, calc(env(safe-area-inset-top) + 137px));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 59px;
+  border-color: #2e637988;
+  background: #e6f5ff;
+  box-shadow: 0 2px #2e637930;
+  color: #1a4359;
+  font-size: 14px;
+  pointer-events: none;
+}
+.effect-cherry img { width: 23px; height: 23px; }
 .toast {
   padding: 9px 14px;
   border: 1.5px solid var(--ink);
@@ -226,6 +236,17 @@ h1 span::after {
   text-align: center;
 }
 .panel h2 { font-size: clamp(25px, 7vw, 34px); font-weight: 950; letter-spacing: -.045em; }
+.panel-art { display: block; object-fit: contain; }
+.sleep-art {
+  width: 176px;
+  height: 104px;
+  background: radial-gradient(ellipse at 50% 73%, #e4edfd 0 46%, transparent 47%);
+}
+.happy-art {
+  width: 104px;
+  height: 99px;
+  background: radial-gradient(ellipse at center, #e9f6b4 0 55%, transparent 56%);
+}
 .plain {
   border: 0;
   background: none;
@@ -303,4 +324,6 @@ h1 span::after {
   h1 { font-size: clamp(43px, 11vw, 61px); }
   .lead { margin: 15px 0 14px; }
   .panel { padding-block: 15px; gap: 9px; }
+  .sleep-art { height: 74px; }
+  .happy-art { height: 68px; }
 }

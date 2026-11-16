@@ -1,13 +1,14 @@
 export const WIDTH = 400;
 export const GIFT_GOAL = 5;
 export const START_LIVES = 3;
-export const FOOD_EFFECTS = Object.freeze({burger: 6, cherry: 8});
+export const FOOD_EFFECTS = Object.freeze({burger: 6, cherry: 5});
 export const STEP = 1 / 120;
 export const GRAVITY = 1650;
 const BOUNCE = 690;
 const START_HEIGHT = 125;
 const HERO_HEIGHT = 44;
 const HERO_RADIUS = 12;
+const CHERRY_CHANCE = .2;
 const MONSTERS = ['blob', 'cyclops', 'bat'];
 
 export const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
@@ -93,7 +94,8 @@ export class Game {
         this.nextGift += Math.floor(this.between(6, 9));
         if (this.nextFood === row) this.nextFood++;
       } else if (row === this.nextFood) {
-        this.items.push({x, y: y + 29, kind: this.random() < .5 ? 'burger' : 'cherry', platform, taken: false});
+        const kind = this.random() < CHERRY_CHANCE ? 'cherry' : 'burger';
+        this.items.push({x, y: y + 29, kind, platform, taken: false});
         this.nextFood += Math.floor(this.between(2, 5));
       } else if (row > 5 && this.random() < .20 + .09 * difficulty) {
         const kind = MONSTERS[Math.floor(this.random() * MONSTERS.length)];
