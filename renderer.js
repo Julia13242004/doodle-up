@@ -1,4 +1,5 @@
-import {WIDTH, clamp} from './game.js';
+import {EMBEDDED_SPRITES} from './sprite-data.js';
+import {WIDTH, clamp} from './game.js?v=2';
 
 const FILES = {
   hero: 'Doodle',
@@ -13,7 +14,6 @@ const FILES = {
   cherry: 'prize-cherry',
   gift: 'prize-gift'
 };
-import {EMBEDDED_SPRITES} from './sprite-data.js';
 const INK = '#24241a';
 
 export async function loadSprites() {
@@ -53,10 +53,10 @@ export class Renderer {
 
   background(camera) {
     const {ctx, height} = this;
-    ctx.fillStyle = '#fdfcf5';
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, WIDTH, height);
     const paperOrigin = height + camera;
-    for (const [step, color] of [[20, '#ecebdf'], [100, '#deded0']]) {
+    for (const [step, color] of [[20, '#ededed'], [100, '#d9d9d9']]) {
       ctx.strokeStyle = color;
       ctx.lineWidth = step === 20 ? .7 : .86;
       ctx.beginPath();
