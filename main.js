@@ -1,6 +1,6 @@
-import {EMBEDDED_SPRITES} from './sprite-data.js';
-import {Game, STEP, GIFT_GOAL, FOOD_EFFECTS} from './game.js?v=3';
-import {Renderer, loadSprites} from './renderer.js?v=2';
+import {EMBEDDED_SPRITES} from './sprite-data.js?v=4';
+import {Game, STEP, GIFT_GOAL, FOOD_EFFECTS} from './game.js?v=4';
+import {Renderer, loadSprites} from './renderer.js?v=4';
 
 const find = (id) => document.getElementById(id);
 const ui = Object.fromEntries([
@@ -275,3 +275,4 @@ ui.hud.querySelector('.goal').textContent = '/ ' + GIFT_GOAL;
 renderer.draw();
 prepare();
 requestAnimationFrame(frame);
+
