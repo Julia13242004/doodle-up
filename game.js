@@ -1,5 +1,5 @@
 export const WIDTH = 400;
-export const GIFT_GOAL = 5;
+export const GIFT_GOAL = 10;
 export const START_LIVES = 3;
 export const FOOD_EFFECTS = Object.freeze({burger: 6, cherry: 5});
 export const STEP = 1 / 120;
@@ -270,3 +270,4 @@ export class Game {
     this.fragments = this.fragments.filter(({time}) => this.time - time < .65);
   }
 }
+
