@@ -1,12 +1,12 @@
-import {EMBEDDED_SPRITES} from './sprite-data.js';
-import {WIDTH, clamp} from './game.js?v=2';
+import {EMBEDDED_SPRITES} from './sprite-data.js?v=4';
+import {WIDTH, clamp} from './game.js?v=4';
 
 const FILES = {
   hero: 'Doodle',
   shoot: 'Doodle-shoot',
-  normal: 'platform-normal',
-  moving: 'platform-moving',
-  breakable: 'platform-breakable',
+  normal: 'birthday/platform-birthday-normal-game',
+  moving: 'birthday/platform-birthday-moving-game',
+  breakable: 'birthday/platform-birthday-breakable-game',
   blob: 'monster-blob',
   cyclops: 'monster-cyclops',
   bat: 'monster-bat',
@@ -217,3 +217,4 @@ export class Renderer {
     ctx.restore();
   }
 }
+
