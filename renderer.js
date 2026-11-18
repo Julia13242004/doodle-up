@@ -1,4 +1,4 @@
-import {EMBEDDED_SPRITES} from './sprite-data.js?v=4';
+import {EMBEDDED_SPRITES} from './sprite-data.js?v=4.1';
 import {WIDTH, clamp} from './game.js?v=4';
 
 const FILES = {
